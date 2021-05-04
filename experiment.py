@@ -1,4 +1,5 @@
 from utils import return_best_candidates, get_clear_context
+from wordfreq import word_frequency
 try:
     from fastText_multilingual import fasttext
 except:
@@ -14,15 +15,6 @@ def cos_sim_by_embeddings(word1_embed, word2_embed):
         word2_embed
         )
     return sim
-  
-def p_cos_sim_by_embeddings(word1_embed, word2_embed):
-    """
-    """
-    sim = cos_sim_by_embeddings(
-        word1_embed,
-        word2_embed
-        )
-    return (sim + 1)/2
 
 
 def get_metrics_for_each_candidate(
@@ -43,11 +35,14 @@ def get_metrics_for_each_candidate(
 
     target_word = target_word.lower()
     context = get_clear_context(sentence, target_word, context_size, delete_stopwords)
-    target_word_embed = eng_lang_embed[target_word]
 
+    if target_word not in eng_lang_embed or each_candidate not in esp_lang_embed:
+        return Add, BalAdd, Mul, BalMul
+
+    target_word_embed = eng_lang_embed[target_word]
     candidate_embed = esp_lang_embed[each_candidate]
     s1 = cos_sim_by_embeddings(target_word_embed, candidate_embed)
-    sp1 = p_cos_sim_by_embeddings(target_word_embed, candidate_embed)
+    sp1 = (s1 + 1) / 2
 
     sa=0
     sm=1
@@ -58,7 +53,7 @@ def get_metrics_for_each_candidate(
         if context_word in eng_lang_embed:
             context_w_embed = eng_lang_embed[context_word]
             sa += cos_sim_by_embeddings(context_w_embed, candidate_embed) * context_weight
-            sm *= p_cos_sim_by_embeddings(context_w_embed, candidate_embed) * context_weight
+            sm *= ((sa + 1) / 2) * context_weight
             i += 1
 
     Add[each_candidate] = (s1 + sa) / (i + 1)
