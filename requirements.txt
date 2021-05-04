@@ -1,0 +1,4 @@
+fastText_multilingual
+wordfreq
+py_babelnet
+tqdm
