@@ -2,6 +2,7 @@ from fastText_multilingual import fasttext
 from typing import Union, List, Dict, Tuple, OrderedDict, Optional
 from tqdm import trange
 import collections
+from nltk.tokenize import RegexpTokenizer
 try:
     from nltk.corpus import stopwords
 except:
@@ -37,10 +38,10 @@ class CL_embeddings:
     ) -> List[Tuple[str, float]]:
         
         context_with_weights = []
-        if not isinstance(context, list):
-            context = context.split()
-        
-        lower_context = [c.lower().strip() for c in context]
+        if isinstance(context, list):
+            context = ' '.join(context)
+        no_punct_context = RegexpTokenizer(r'\w+').tokenize(context)
+        lower_context = [c.lower().strip() for c in no_punct_context]
         filtered_context = [w for w in lower_context if w == target_word or w not in self.set_stopwords]
         if target_word_id is not None:
             position_tw = target_word_id
