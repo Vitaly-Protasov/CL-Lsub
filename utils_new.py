@@ -38,3 +38,42 @@ def clearing_word(word: str) -> str:
       if len(cleared_w) >= 2:
           return cleared_w
   return ''
+
+
+def form_submission(dict_of_predictions: List[OrderedDict[str, float]], df_column: pd.DataFrame, type_task: str, filename:str):
+    file_path = f'{filename}.{type_task}'
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    f_test_result = open(file_path, 'a+')
+    if type_task == 'oot':
+        delimeter = ' ::: '
+        for cands_index, name in zip(dict_of_predictions, df_column):
+            list_candidates = list(dict_of_predictions[cands_index].keys())
+
+            top_subs = ';'.join(list_candidates) + ';'
+            string_to_write = name + delimeter + top_subs + '\n'
+            f_test_result.write(string_to_write)
+        f_test_result.close()
+    elif type_task == 'best':
+        delimeter = ' :: '
+        for cands_index, name in zip(dict_of_predictions, df_column):
+            best_cand = list(dict_of_predictions[cands_index].keys())[0]
+
+            string_to_write = name + delimeter + best_cand + '\n'
+            f_test_result.write(string_to_write)
+        f_test_result.close()
+
+
+def print_semeval2010_2_file_results(file_path, gold_filepath, path_to_score_pl):
+    """
+    """
+    command_list = ['perl', path_to_score_pl, file_path, gold_filepath]
+
+    if file_path.endswith('.oot'):
+        command_list.extend(['-t', 'oot'])
+    result = subprocess.run(command_list, 
+                            stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE, encoding='utf-8')
+    output = result.stdout.split('\n')
+    for i in output:
+        print(i)
