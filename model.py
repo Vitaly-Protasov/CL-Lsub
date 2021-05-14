@@ -147,7 +147,7 @@ class CL_embeddings:
             )[0]
             final_candidate_score = self.BalAdd_BalMul(
                 tw_embedding, self.cand_embedding[best_part_cand], target_word, context, target_word_id
-            )[0]
+            )[0] # BalAdd
             substites_scores_dict[each_candidate] = final_candidate_score / len(splited_candidate)
 
         best_candidates_tuple = sorted(substites_scores_dict.items(), key=lambda kv: kv[1], reverse=True)[:self.num_candidates]
