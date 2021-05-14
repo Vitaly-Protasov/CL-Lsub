@@ -1,6 +1,5 @@
-from utils import return_best_candidates, get_clear_context
 from fastText_multilingual import fasttext
-from typing import Union, List, Dict, Tuple, OrderedDict
+from typing import Union, List, Dict, Tuple, OrderedDict, Optional
 from tqdm import trange
 import collections
 try:

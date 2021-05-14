@@ -9,6 +9,7 @@ from scipy.stats import truncnorm
 from typing import List, Dict, Set, Union, Tuple, OrderedDict
 nltk.download('stopwords')
 from nltk.corpus import stopwords
+import pickle
 
 
 def substitute_nonunicode_letters(nonunicode_word: str) -> str:
@@ -77,3 +78,8 @@ def print_semeval2010_2_file_results(file_path, gold_filepath, path_to_score_pl)
     output = result.stdout.split('\n')
     for i in output:
         print(i)
+
+
+def from_pickle_to_dict(pickle_path):
+    f = open(pickle_path,"rb")
+    return pickle.load(f)
